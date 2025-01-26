@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pixelkit"
-version = "0.0.1-alpha0.1"
+version = "0.0.1-alpha1"
 authors = [
   { name="Avnish Kumar", email="kumaravnish.456@gmail.com"},
    {name="Rohit Kumar", email="sahil15rohit88@gmail.com" },

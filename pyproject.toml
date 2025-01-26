@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pixelkit"
+version = "0.0.1-alpha"
+authors = [
+  { name="Avnish Kumar", email="kumaravnish.456@gmail.com"},
+   {name="Rohit Kumar", email="sahil15rohit88@gmail.com" },
+]
+description = "A versatile toolkit for all your image processing needs! 🚀"
+readme = "README.md"
+requires-python = ">=3.9.5"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/rokmr/pypi-utilities"
+Issues = "https://github.com/rokmr/pypi-utilities/issues"

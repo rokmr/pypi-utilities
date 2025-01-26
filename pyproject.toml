@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pixelkit"
-version = "0.0.1-alpha"
+version = "0.0.1-alpha0.1"
 authors = [
   { name="Avnish Kumar", email="kumaravnish.456@gmail.com"},
    {name="Rohit Kumar", email="sahil15rohit88@gmail.com" },
@@ -12,6 +12,10 @@ authors = [
 description = "A versatile toolkit for all your image processing needs! 🚀"
 readme = "README.md"
 requires-python = ">=3.9.5"
+dependencies = [
+    "requests",
+    "Pillow"
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

@@ -1,19 +1,24 @@
 import requests
 from PIL import Image
+import cv2
 import io
 import warnings
 from typing import Optional, Union
 import numpy as np
 from urllib.parse import urlparse
+from decorators import image_loader, image_operation, required_args
 
-#TODO: Add basic image properties, and operations
+#TODO: Add basic image properties, and operations, decorators
+
 class Pixel():
     def __init__(self):
-        pass
+        self.image = None
 
-    def load_image(self, image: Union[str, np.ndarray, Image.Image]) -> Optional[Image.Image]:
+    @image_loader
+    def load(self, image: Union[str, np.ndarray, Image.Image]) -> 'Pixel':
         """
         Load an image from a file, numpy array, or PIL Image object.
+        Returns self for method chaining.
 
         Args:
             image (Union[str, np.ndarray, Image.Image]): The image to load. Can be:
@@ -22,8 +27,7 @@ class Pixel():
                 - A PIL Image object
 
         Returns:
-            PIL.Image.Image: A PIL Image object containing the image data.
-                Returns None if loading fails.
+            Pixel: The loaded Pixel object.
 
         Raises:
             ValueError: If the input type is invalid or if loading fails
@@ -42,6 +46,15 @@ class Pixel():
             if isinstance(image, str):
                 return Image.open(image)
             elif isinstance(image, np.ndarray):
+                # Handle numpy arrays with values in [0, 1] range
+                if image.dtype == np.float32 or image.dtype == np.float64:
+                    if np.min(image) >= 0 and np.max(image) <= 1:
+                        image = (image * 255).astype(np.uint8)
+                # Handle numpy arrays with values in [0, 255] range
+                elif image.dtype == np.uint8:
+                    pass
+                else:
+                    raise ValueError("Numpy array must be uint8 (0-255) or float (0-1)")
                 return Image.fromarray(image)
             elif isinstance(image, Image.Image):
                 return image
@@ -53,9 +66,11 @@ class Pixel():
             raise ValueError(f"Error loading image: {str(e)}")
         
     
-    def loadimage_from_url(self, url: str, verify_ssl: bool = True) -> Optional[Image.Image]:
+    @image_loader
+    def load_url(self, url: str, verify_ssl: bool = True) -> 'Pixel':
         """
-        Download an image from a URL and return it as a PIL Image object.
+        Download an image from a URL.
+        Returns self for method chaining.
 
         Args:
             url (str): The URL of the image to download
@@ -63,8 +78,7 @@ class Pixel():
                 Set to False only if you trust the source and are having SSL issues.
 
         Returns:
-            PIL.Image.Image: A PIL Image object containing the image data.
-                Returns None if download or conversion fails.
+            Pixel: The loaded Pixel object.
 
         Raises:
             ValueError: If the URL is invalid
@@ -114,3 +128,59 @@ class Pixel():
         except Exception as e:
             warnings.warn(f"Error processing image: {str(e)}", UserWarning)
             return None
+    
+    @image_loader
+    def load_base64(self, base64: str) -> 'Pixel':
+        """
+        Load an image from a base64 encoded string.
+        Returns self for method chaining.
+        """
+        try:
+            img = Image.open(io.BytesIO(base64.decode('base64')))
+            return img
+        except Exception as e:
+            warnings.warn(f"Error processing image: {str(e)}", UserWarning)
+            return None
+        
+    @image_operation
+    def canny(self, threshold1: int = 100, threshold2: int = 200) -> 'Pixel':
+        """
+        Apply Canny edge detection to the image.
+        Returns self for method chaining.
+        """
+        # Convert PIL Image to numpy array
+        img_array = np.array(self.image)
+        # Apply Canny edge detection
+        edges = cv2.Canny(img_array, threshold1, threshold2)
+        # Convert back to PIL Image
+        return Image.fromarray(edges)
+    
+    @image_operation
+    @required_args
+    def resize(self, width: int, height: int) -> 'Pixel':
+        """
+        Resize the image to the specified width and height.
+        width: Change in x-axis dimension
+        height: Change in y-axis dimension
+        Returns self for method chaining.
+        """
+        self.image = self.image.resize((width, height))
+        return self
+    
+    @image_operation
+    def save(self, path: str) -> 'Pixel':
+        """
+        Save the image to the specified path.
+        Returns self for method chaining.
+        """
+        self.image.save(path)
+        return self 
+    
+    @image_operation
+    def show(self) -> 'Pixel':
+        """
+        Display the image.
+        Returns self for method chaining.
+        """
+        self.image.show()
+        return self

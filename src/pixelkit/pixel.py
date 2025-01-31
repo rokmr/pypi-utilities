@@ -63,7 +63,13 @@ class Pixel(Image.Image):
     @staticmethod
     @image_loader
     def load_url(self, url: str, verify_ssl: bool = True) -> 'Pixel':
-        pass
+        try:
+            response = requests.get(url, verify=verify_ssl)
+            response.raise_for_status()
+            image = Image.open(io.BytesIO(response.content))
+            return self._make_pixel_instance(image)
+        except Exception as e:
+            raise ValueError(f"Error loading image from URL: {str(e)}")
     
     @staticmethod
     @image_loader

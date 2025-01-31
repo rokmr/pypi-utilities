@@ -1,4 +1,5 @@
 import functools
+import inspect
 from typing import List, Callable, Any
 import warnings
 from PIL import Image

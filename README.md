@@ -1,3 +1,8 @@
+<div align="center">
+  <img src="assets/pixelkit.png" alt="Pixelkit Logo" width="200"/>
+  <h1>Pixelkit</h1>
+</div>
+
 # Pixelkit 🎨
 
 A powerful and intuitive Python library for image processing, built on top of PIL, OpenCV, and NumPy. Pixelkit provides a fluent interface for common image operations with an emphasis on elegance and ease of use.
